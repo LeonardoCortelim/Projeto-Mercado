@@ -1,6 +1,10 @@
-package principal;
+package view;
 
 import javax.swing.*;
+
+import controller.Supermercado;
+import model.Produto;
+
 import java.awt.*;
 
 public class TelaCadastroProdutos extends JFrame {
