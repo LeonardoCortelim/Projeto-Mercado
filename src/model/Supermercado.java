@@ -1,8 +1,6 @@
-package controller;
+package model;
 
 import java.util.ArrayList;
-
-import model.Produto;
 
 public class Supermercado {
     private static ArrayList<Produto> produtos = new ArrayList<>();

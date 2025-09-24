@@ -2,7 +2,7 @@ package view;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import controller.InicioController;
 
 public class TelaDeInicio extends JFrame {
     private JTextField txtNome;
@@ -10,7 +10,11 @@ public class TelaDeInicio extends JFrame {
     private JCheckBox chkAdmin;
     private JButton btnEntrar;
 
+    private InicioController controller;
+
     public TelaDeInicio() {
+        controller = new InicioController(this);
+
         setTitle("Identificação do Usuário");
         setSize(350, 250);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -26,28 +30,10 @@ public class TelaDeInicio extends JFrame {
         chkAdmin = new JCheckBox("Sou administrador do sistema");
         btnEntrar = new JButton("Entrar");
 
-        btnEntrar.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String nome = txtNome.getText();
-                String cpf = txtCPF.getText();
-                boolean isAdmin = chkAdmin.isSelected();
-
-                if (nome.isEmpty() || cpf.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "Preencha todos os campos!");
-                    return;
-                }
-
-                if (isAdmin) {
-                    JOptionPane.showMessageDialog(null, "Bem-vindo administrador: " + nome);
-                    new TelaCadastroProdutos().setVisible(true);
-                    dispose();
-                } else {
-                    JOptionPane.showMessageDialog(null, "Bem-vindo cliente: " + nome);
-                    new TelaCompra(nome, cpf).setVisible(true);
-                    dispose();
-                }
-            }
-        });
+       
+        btnEntrar.addActionListener(e -> 
+            controller.login(txtNome.getText(), txtCPF.getText(), chkAdmin.isSelected())
+        );
 
         add(lblNome);
         add(txtNome);
@@ -60,8 +46,6 @@ public class TelaDeInicio extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            new TelaDeInicio().setVisible(true);
-        });
+        SwingUtilities.invokeLater(() -> new TelaDeInicio().setVisible(true));
     }
 }

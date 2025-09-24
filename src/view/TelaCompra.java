@@ -1,12 +1,10 @@
 package view;
 
 import javax.swing.*;
-
-import controller.Supermercado;
-import model.Produto;
-
 import java.awt.*;
-import java.util.ArrayList;
+import controller.CompraController;
+import model.Produto;
+import model.Supermercado;
 
 public class TelaCompra extends JFrame {
     private JList<Produto> listaProdutos;
@@ -14,14 +12,10 @@ public class TelaCompra extends JFrame {
     private JList<Produto> listaCarrinho;
     private JLabel lblTotal;
     private JButton btnAdicionar, btnRemover, btnNotaFiscal, btnLogout;
-    private ArrayList<Produto> carrinho;
-    private String nomeUsuario;
-    private String cpfUsuario;
+    private CompraController controller;
 
     public TelaCompra(String nome, String cpf) {
-        this.nomeUsuario = nome;
-        this.cpfUsuario = cpf;
-        carrinho = new ArrayList<>();
+        controller = new CompraController(nome, cpf);
 
         setTitle("Tela de Compra (Cliente)");
         setSize(650, 450);
@@ -60,7 +54,7 @@ public class TelaCompra extends JFrame {
         lblTotal = new JLabel("Total: R$ 0.0");
         add(lblTotal, BorderLayout.NORTH);
 
-        // Ações
+        // Ações → agora chamam o controller
         btnAdicionar.addActionListener(e -> adicionarAoCarrinho());
         btnRemover.addActionListener(e -> removerDoCarrinho());
         btnNotaFiscal.addActionListener(e -> emitirNotaFiscal());
@@ -74,10 +68,9 @@ public class TelaCompra extends JFrame {
     private void adicionarAoCarrinho() {
         Produto selecionado = listaProdutos.getSelectedValue();
         if (selecionado != null) {
-            carrinho.add(selecionado);
+            controller.adicionarProduto(selecionado);
             carrinhoModel.addElement(selecionado);
             atualizarTotal();
-            JOptionPane.showMessageDialog(this, "Produto adicionado ao carrinho!");
         } else {
             JOptionPane.showMessageDialog(this, "Selecione um produto para adicionar!");
         }
@@ -86,43 +79,21 @@ public class TelaCompra extends JFrame {
     private void removerDoCarrinho() {
         Produto selecionado = listaCarrinho.getSelectedValue();
         if (selecionado != null) {
-            carrinho.remove(selecionado);
+            controller.removerProduto(selecionado);
             carrinhoModel.removeElement(selecionado);
             atualizarTotal();
-            JOptionPane.showMessageDialog(this, "Produto removido do carrinho!");
         } else {
             JOptionPane.showMessageDialog(this, "Selecione um produto para remover!");
         }
     }
 
     private void atualizarTotal() {
-        double total = 0;
-        for (Produto p : carrinho) {
-            total += p.getPreco();
-        }
+        double total = controller.calcularTotal();
         lblTotal.setText("Total: R$ " + total);
     }
 
     private void emitirNotaFiscal() {
-        if (carrinho.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Carrinho vazio!");
-            return;
-        }
-
-        StringBuilder nota = new StringBuilder();
-        nota.append("Nota Fiscal\n");
-        nota.append("Cliente: ").append(nomeUsuario).append("\n");
-        nota.append("CPF: ").append(cpfUsuario).append("\n\n");
-        nota.append("Produtos:\n");
-
-        double total = 0;
-        for (Produto p : carrinho) {
-            nota.append("- ").append(p.getNome()).append(" (R$ ").append(p.getPreco()).append(")\n");
-            total += p.getPreco();
-        }
-
-        nota.append("\nTotal: R$ ").append(total);
-
-        JOptionPane.showMessageDialog(this, nota.toString());
+        String nota = controller.emitirNotaFiscal();
+        JOptionPane.showMessageDialog(this, nota);
     }
 }

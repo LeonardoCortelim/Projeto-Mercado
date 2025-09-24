@@ -1,11 +1,12 @@
+// view/TelaCadastroProdutos.java
 package view;
 
 import javax.swing.*;
-
-import controller.Supermercado;
+import controller.ProdutoController;
 import model.Produto;
-
+import model.Supermercado;
 import java.awt.*;
+import java.util.List;
 
 public class TelaCadastroProdutos extends JFrame {
     private JTextField txtNomeProduto;
@@ -14,12 +15,16 @@ public class TelaCadastroProdutos extends JFrame {
     private DefaultListModel<Produto> listaModel;
     private JList<Produto> listaProdutos;
 
+    private ProdutoController controller;
+
     public TelaCadastroProdutos() {
         setTitle("Cadastro de Produtos (Administrador)");
         setSize(500, 400);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
+
+        controller = new ProdutoController(this);
 
         listaModel = new DefaultListModel<>();
         for (Produto p : Supermercado.getProdutos()) {
@@ -55,8 +60,8 @@ public class TelaCadastroProdutos extends JFrame {
         add(new JScrollPane(listaProdutos), BorderLayout.CENTER);
 
         // Ações
-        btnCadastrar.addActionListener(e -> cadastrarProduto());
-        btnRemover.addActionListener(e -> removerProduto());
+        btnCadastrar.addActionListener(e -> controller.cadastrarProduto(txtNomeProduto.getText(), txtPrecoProduto.getText()));
+        btnRemover.addActionListener(e -> controller.removerProduto(listaProdutos.getSelectedValue()));
         btnLogout.addActionListener(e -> {
             JOptionPane.showMessageDialog(this, "Logout realizado com sucesso!");
             new TelaDeInicio().setVisible(true);
@@ -64,37 +69,13 @@ public class TelaCadastroProdutos extends JFrame {
         });
     }
 
-    private void cadastrarProduto() {
-        String nome = txtNomeProduto.getText();
-        String precoStr = txtPrecoProduto.getText();
-
-        if (nome.isEmpty() || precoStr.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Preencha todos os campos!");
-            return;
-        }
-
-        try {
-            double preco = Double.parseDouble(precoStr);
-            Produto p = new Produto(nome, preco);
-            Supermercado.adicionarProduto(p);
+    // Método para atualizar lista na tela
+    public void atualizarListaProdutos(List<Produto> produtos) {
+        listaModel.clear();
+        for (Produto p : produtos) {
             listaModel.addElement(p);
-
-            JOptionPane.showMessageDialog(this, "Produto cadastrado com sucesso!");
-            txtNomeProduto.setText("");
-            txtPrecoProduto.setText("");
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "Preço inválido!");
         }
-    }
-
-    private void removerProduto() {
-        Produto selecionado = listaProdutos.getSelectedValue();
-        if (selecionado != null) {
-            Supermercado.removerProduto(selecionado);
-            listaModel.removeElement(selecionado);
-            JOptionPane.showMessageDialog(this, "Produto removido com sucesso!");
-        } else {
-            JOptionPane.showMessageDialog(this, "Selecione um produto para remover!");
-        }
+        txtNomeProduto.setText("");
+        txtPrecoProduto.setText("");
     }
 }
