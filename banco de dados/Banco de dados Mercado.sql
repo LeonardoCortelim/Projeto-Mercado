@@ -1,15 +1,12 @@
--- Seleciona o banco
 CREATE DATABASE mercado;
 USE mercado;
 
--- Produtos
 CREATE TABLE Produto (
     id_produto INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     preco DECIMAL(10,2) NOT NULL
 );
 
--- Compras (nome e CPF do cliente direto)
 CREATE TABLE Compra (
     id_compra INT AUTO_INCREMENT PRIMARY KEY,
     nome_cliente VARCHAR(100) NOT NULL,
@@ -18,7 +15,6 @@ CREATE TABLE Compra (
     valor_total DECIMAL(10,2) NOT NULL
 );
 
--- Itens da compra
 CREATE TABLE ItemCompra (
     id_item INT AUTO_INCREMENT PRIMARY KEY,
     id_compra INT NOT NULL,
