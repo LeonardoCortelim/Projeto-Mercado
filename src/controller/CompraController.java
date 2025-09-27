@@ -1,17 +1,28 @@
 package controller;
 
+import dao.CompraDAO;
+import model.Compra;
+import model.ItemCompra;
 import model.Produto;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JOptionPane;
 
 public class CompraController {
     private ArrayList<Produto> carrinho;
     private String nomeUsuario;
     private String cpfUsuario;
 
+    private CompraDAO compraDAO;
+
     public CompraController(String nome, String cpf) {
         this.nomeUsuario = nome;
         this.cpfUsuario = cpf;
         this.carrinho = new ArrayList<>();
+        this.compraDAO = new CompraDAO();
     }
 
     public void adicionarProduto(Produto p) {
@@ -54,5 +65,27 @@ public class CompraController {
 
     public ArrayList<Produto> getCarrinho() {
         return carrinho;
+    }
+
+    public void finalizarCompra() {
+        if (carrinho.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Carrinho vazio!");
+            return;
+        }
+
+        double valorTotal = calcularTotal();
+
+        List<ItemCompra> itens = new ArrayList<>();
+        for (Produto p : carrinho) {
+            itens.add(new ItemCompra(p.getIdProduto(), 1, p.getPreco())); // quantidade=1 por produto
+        }
+
+        Compra compra = new Compra(nomeUsuario, cpfUsuario, LocalDateTime.now(), valorTotal, itens);
+
+        compraDAO.salvarCompra(compra);
+
+        JOptionPane.showMessageDialog(null, "Compra finalizada com sucesso!\n" + emitirNotaFiscal());
+
+        carrinho.clear(); // Limpa carrinho após finalizar
     }
 }

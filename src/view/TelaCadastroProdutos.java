@@ -1,10 +1,8 @@
-// view/TelaCadastroProdutos.java
 package view;
 
 import javax.swing.*;
 import controller.ProdutoController;
 import model.Produto;
-import model.Supermercado;
 import java.awt.*;
 import java.util.List;
 
@@ -24,42 +22,39 @@ public class TelaCadastroProdutos extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
 
-        controller = new ProdutoController(this);
+        // Inicializa componentes antes do controller
+        txtNomeProduto = new JTextField();
+        txtPrecoProduto = new JTextField();
 
         listaModel = new DefaultListModel<>();
-        for (Produto p : Supermercado.getProdutos()) {
-            listaModel.addElement(p);
-        }
         listaProdutos = new JList<>(listaModel);
 
         // Painel de entrada
         JPanel painelEntrada = new JPanel(new GridLayout(2, 2, 10, 10));
         painelEntrada.add(new JLabel("Nome do Produto:"));
-        txtNomeProduto = new JTextField();
         painelEntrada.add(txtNomeProduto);
-
         painelEntrada.add(new JLabel("Preço:"));
-        txtPrecoProduto = new JTextField();
         painelEntrada.add(txtPrecoProduto);
-
         add(painelEntrada, BorderLayout.NORTH);
 
         // Botões
-        JPanel painelBotoes = new JPanel(new GridLayout(1, 3, 10, 10));
         btnCadastrar = new JButton("Cadastrar");
         btnRemover = new JButton("Remover");
         btnLogout = new JButton("Logout");
 
+        JPanel painelBotoes = new JPanel(new GridLayout(1, 3, 10, 10));
         painelBotoes.add(btnCadastrar);
         painelBotoes.add(btnRemover);
         painelBotoes.add(btnLogout);
-
         add(painelBotoes, BorderLayout.SOUTH);
 
         // Lista de produtos
         add(new JScrollPane(listaProdutos), BorderLayout.CENTER);
 
-        // Ações
+        // Agora sim, cria o controller
+        controller = new ProdutoController(this);
+
+        // Ações dos botões
         btnCadastrar.addActionListener(e -> controller.cadastrarProduto(txtNomeProduto.getText(), txtPrecoProduto.getText()));
         btnRemover.addActionListener(e -> controller.removerProduto(listaProdutos.getSelectedValue()));
         btnLogout.addActionListener(e -> {
@@ -69,7 +64,7 @@ public class TelaCadastroProdutos extends JFrame {
         });
     }
 
-    // Método para atualizar lista na tela
+    // Atualiza lista de produtos na tela
     public void atualizarListaProdutos(List<Produto> produtos) {
         listaModel.clear();
         for (Produto p : produtos) {

@@ -2,9 +2,11 @@ package view;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
+
 import controller.CompraController;
+import dao.ProdutoDAO;
 import model.Produto;
-import model.Supermercado;
 
 public class TelaCompra extends JFrame {
     private JList<Produto> listaProdutos;
@@ -23,8 +25,10 @@ public class TelaCompra extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
 
-        // Lista de produtos disponíveis
-        listaProdutos = new JList<>(Supermercado.getProdutos().toArray(new Produto[0]));
+        // Buscar produtos diretamente do banco
+        ProdutoDAO produtoDAO = new ProdutoDAO();
+        List<Produto> produtosDisponiveis = produtoDAO.listarProdutos();
+        listaProdutos = new JList<>(produtosDisponiveis.toArray(new Produto[0]));
 
         // Carrinho
         carrinhoModel = new DefaultListModel<>();
