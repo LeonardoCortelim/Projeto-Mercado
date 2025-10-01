@@ -19,7 +19,7 @@ public class TelaDeInicio extends JFrame {
         setSize(350, 250);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        setLayout(new GridLayout(4, 2, 10, 10));
+        getContentPane().setLayout(new GridLayout(4, 2, 10, 10));
 
         JLabel lblNome = new JLabel("Nome:");
         txtNome = new JTextField();
@@ -27,7 +27,7 @@ public class TelaDeInicio extends JFrame {
         JLabel lblCPF = new JLabel("CPF:");
         txtCPF = new JTextField();
 
-        chkAdmin = new JCheckBox("Sou administrador do sistema");
+        chkAdmin = new JCheckBox("Sou administrador");
         btnEntrar = new JButton("Entrar");
 
        
@@ -35,14 +35,14 @@ public class TelaDeInicio extends JFrame {
             controller.login(txtNome.getText(), txtCPF.getText(), chkAdmin.isSelected())
         );
 
-        add(lblNome);
-        add(txtNome);
-        add(lblCPF);
-        add(txtCPF);
-        add(new JLabel());
-        add(chkAdmin);
-        add(new JLabel());
-        add(btnEntrar);
+        getContentPane().add(lblNome);
+        getContentPane().add(txtNome);
+        getContentPane().add(lblCPF);
+        getContentPane().add(txtCPF);
+        getContentPane().add(new JLabel());
+        getContentPane().add(chkAdmin);
+        getContentPane().add(new JLabel());
+        getContentPane().add(btnEntrar);
     }
 
     public static void main(String[] args) {
