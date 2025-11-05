@@ -27,7 +27,7 @@ public class TelaDeInicio extends JFrame {
         JLabel lblCPF = new JLabel("CPF:");
         txtCPF = new JTextField();
 
-        chkAdmin = new JCheckBox("Sou administrador");
+        chkAdmin = new JCheckBox("Sou um administrador");
         btnEntrar = new JButton("Entrar");
 
        
