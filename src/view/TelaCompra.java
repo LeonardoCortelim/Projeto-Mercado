@@ -19,44 +19,72 @@ public class TelaCompra extends JFrame {
     public TelaCompra(String nome, String cpf) {
         controller = new CompraController(nome, cpf);
 
-        setTitle("Tela de Compra (Cliente)");
-        setSize(650, 450);
+        setTitle("Tela de Compra (Cliente) - " + nome);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
-        setLayout(new BorderLayout(10, 10));
+        
+        // Container principal
+        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
         // Buscar produtos diretamente do banco
         ProdutoDAO produtoDAO = new ProdutoDAO();
         List<Produto> produtosDisponiveis = produtoDAO.listarProdutos();
         listaProdutos = new JList<>(produtosDisponiveis.toArray(new Produto[0]));
+        listaProdutos.setFont(new Font("SansSerif", Font.PLAIN, 13));
 
         // Carrinho
         carrinhoModel = new DefaultListModel<>();
         listaCarrinho = new JList<>(carrinhoModel);
+        listaCarrinho.setFont(new Font("SansSerif", Font.PLAIN, 13));
 
-        // Painel central
-        JPanel painelCentral = new JPanel(new GridLayout(1, 2, 10, 10));
-        painelCentral.add(new JScrollPane(listaProdutos));
-        painelCentral.add(new JScrollPane(listaCarrinho));
-        add(painelCentral, BorderLayout.CENTER);
+        // Painel superior com total
+        JPanel painelSuperior = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        painelSuperior.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        lblTotal = new JLabel("Total: R$ 0.0");
+        lblTotal.setFont(new Font("SansSerif", Font.BOLD, 16));
+        painelSuperior.add(lblTotal);
+        mainPanel.add(painelSuperior, BorderLayout.NORTH);
+
+        // Painel central com as duas listas lado a lado
+        JPanel painelCentral = new JPanel(new GridLayout(1, 2, 15, 0));
+        
+        // Produtos disponíveis
+        JPanel painelProdutos = new JPanel(new BorderLayout());
+        painelProdutos.setBorder(BorderFactory.createTitledBorder("Produtos Disponíveis"));
+        JScrollPane scrollProdutos = new JScrollPane(listaProdutos);
+        painelProdutos.add(scrollProdutos, BorderLayout.CENTER);
+        
+        // Carrinho
+        JPanel painelCarrinho = new JPanel(new BorderLayout());
+        painelCarrinho.setBorder(BorderFactory.createTitledBorder("Carrinho de Compras"));
+        JScrollPane scrollCarrinho = new JScrollPane(listaCarrinho);
+        painelCarrinho.add(scrollCarrinho, BorderLayout.CENTER);
+        
+        painelCentral.add(painelProdutos);
+        painelCentral.add(painelCarrinho);
+        mainPanel.add(painelCentral, BorderLayout.CENTER);
 
         // Botões
-        JPanel painelBotoes = new JPanel(new GridLayout(1, 4, 10, 10));
+        JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         btnAdicionar = new JButton("Adicionar →");
         btnRemover = new JButton("← Remover");
         btnNotaFiscal = new JButton("Emitir Nota Fiscal");
         btnLogout = new JButton("Logout");
+        
+        btnAdicionar.setPreferredSize(new Dimension(140, 35));
+        btnRemover.setPreferredSize(new Dimension(140, 35));
+        btnNotaFiscal.setPreferredSize(new Dimension(160, 35));
+        btnLogout.setPreferredSize(new Dimension(100, 35));
 
         painelBotoes.add(btnAdicionar);
         painelBotoes.add(btnRemover);
         painelBotoes.add(btnNotaFiscal);
         painelBotoes.add(btnLogout);
 
-        add(painelBotoes, BorderLayout.SOUTH);
+        mainPanel.add(painelBotoes, BorderLayout.SOUTH);
 
-        // Total
-        lblTotal = new JLabel("Total: R$ 0.0");
-        add(lblTotal, BorderLayout.NORTH);
+        add(mainPanel);
 
         // Ações → agora chamam o controller
         btnAdicionar.addActionListener(e -> adicionarAoCarrinho());
@@ -67,6 +95,10 @@ public class TelaCompra extends JFrame {
             new TelaDeInicio().setVisible(true);
             dispose();
         });
+        
+        // Define tamanho e tamanho mínimo
+        setSize(800, 550);
+        setMinimumSize(new Dimension(650, 450));
     }
 
     private void adicionarAoCarrinho() {
@@ -93,7 +125,7 @@ public class TelaCompra extends JFrame {
 
     private void atualizarTotal() {
         double total = controller.calcularTotal();
-        lblTotal.setText("Total: R$ " + total);
+        lblTotal.setText(String.format("Total: R$ %.2f", total));
     }
 
     private void emitirNotaFiscal() {

@@ -22,4 +22,7 @@ public class ItemCompra {
     public double getPrecoUnitario() {
         return precoUnitario;
     }
+    public void setQuantidade(int quantidade) {
+        this.quantidade = quantidade;
+    }
 }

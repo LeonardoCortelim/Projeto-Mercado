@@ -17,39 +17,71 @@ public class TelaCadastroProdutos extends JFrame {
 
     public TelaCadastroProdutos() {
         setTitle("Cadastro de Produtos (Administrador)");
-        setSize(500, 400);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
-        setLayout(new BorderLayout(10, 10));
+        
+        // Container principal
+        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
         // Inicializa componentes antes do controller
         txtNomeProduto = new JTextField();
         txtPrecoProduto = new JTextField();
+        txtNomeProduto.setPreferredSize(new Dimension(200, 30));
+        txtPrecoProduto.setPreferredSize(new Dimension(200, 30));
 
         listaModel = new DefaultListModel<>();
         listaProdutos = new JList<>(listaModel);
+        listaProdutos.setFont(new Font("SansSerif", Font.PLAIN, 14));
 
-        // Painel de entrada
-        JPanel painelEntrada = new JPanel(new GridLayout(2, 2, 10, 10));
-        painelEntrada.add(new JLabel("Nome do Produto:"));
-        painelEntrada.add(txtNomeProduto);
-        painelEntrada.add(new JLabel("Preço:"));
-        painelEntrada.add(txtPrecoProduto);
-        add(painelEntrada, BorderLayout.NORTH);
+        // Painel de entrada com GridBagLayout para responsividade
+        JPanel painelEntrada = new JPanel(new GridBagLayout());
+        painelEntrada.setBorder(BorderFactory.createTitledBorder("Dados do Produto"));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 0.3;
+        painelEntrada.add(new JLabel("Nome do Produto:"), gbc);
+        
+        gbc.gridx = 1;
+        gbc.weightx = 0.7;
+        painelEntrada.add(txtNomeProduto, gbc);
+        
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.weightx = 0.3;
+        painelEntrada.add(new JLabel("Preço:"), gbc);
+        
+        gbc.gridx = 1;
+        gbc.weightx = 0.7;
+        painelEntrada.add(txtPrecoProduto, gbc);
+        
+        mainPanel.add(painelEntrada, BorderLayout.NORTH);
 
         // Botões
         btnCadastrar = new JButton("Cadastrar");
         btnRemover = new JButton("Remover");
         btnLogout = new JButton("Logout");
+        
+        btnCadastrar.setPreferredSize(new Dimension(120, 35));
+        btnRemover.setPreferredSize(new Dimension(120, 35));
+        btnLogout.setPreferredSize(new Dimension(120, 35));
 
-        JPanel painelBotoes = new JPanel(new GridLayout(1, 3, 10, 10));
+        JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         painelBotoes.add(btnCadastrar);
         painelBotoes.add(btnRemover);
         painelBotoes.add(btnLogout);
-        add(painelBotoes, BorderLayout.SOUTH);
+        mainPanel.add(painelBotoes, BorderLayout.SOUTH);
 
-        // Lista de produtos
-        add(new JScrollPane(listaProdutos), BorderLayout.CENTER);
+        // Lista de produtos com scroll
+        JScrollPane scrollPane = new JScrollPane(listaProdutos);
+        scrollPane.setBorder(BorderFactory.createTitledBorder("Produtos Cadastrados"));
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
+
+        add(mainPanel);
 
         // Agora sim, cria o controller
         controller = new ProdutoController(this);
@@ -62,6 +94,10 @@ public class TelaCadastroProdutos extends JFrame {
             new TelaDeInicio().setVisible(true);
             dispose();
         });
+        
+        // Define tamanho e tamanho mínimo
+        setSize(600, 500);
+        setMinimumSize(new Dimension(450, 400));
     }
 
     // Atualiza lista de produtos na tela
